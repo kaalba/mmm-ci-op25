@@ -1,0 +1,93 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+from causalimpact import CausalImpact
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+st.set_page_config(layout="wide")
+
+# --- Simulate data ---
+n_weeks = 52
+countries = ["Argentina", "Brazil", "Chile", "Mexico"]
+np.random.seed(42)
+
+@st.cache_data
+def simulate_data():
+    data = []
+    for country in countries:
+        for week in range(n_weeks):
+            paid_search = np.random.gamma(120, 2)
+            fb_paid = np.random.gamma(90, 2)
+            display_paid = np.random.gamma(60, 2)
+            brand_campaign = 1 if (week >= 40 and week <= 44) else 0
+            baseline = 500 + week * 2 + np.random.normal(0, 15)
+            conv = (
+                0.015 * paid_search +
+                0.02 * fb_paid +
+                0.018 * display_paid +
+                (20 if (brand_campaign == 1 and country == "Argentina") else 0) +
+                baseline
+            )
+            data.append({
+                "week": week,
+                "country": country,
+                "paid_search": paid_search,
+                "fb_paid": fb_paid,
+                "display_paid": display_paid,
+                "brand_campaign": brand_campaign,
+                "conversions": conv
+            })
+    return pd.DataFrame(data)
+
+df = simulate_data()
+
+# --- UI ---
+st.title("🛫 PROS Airline - MMM & Causal Impact Dashboard")
+st.sidebar.header("🔍 Select Market")
+selected_country = st.sidebar.selectbox("Country", countries)
+
+country_df = df[df.country == selected_country].copy()
+
+# --- MMM Section ---
+st.subheader("📊 Marketing Mix Modeling (MMM) Results")
+
+X = country_df[["paid_search", "fb_paid", "display_paid"]].values
+y = country_df["conversions"].values
+
+from sklearn.linear_model import Ridge
+model = Ridge(alpha=1.0)
+model.fit(X, y)
+coefs = model.coef_
+roi = coefs / X.mean(axis=0)
+
+mmm_df = pd.DataFrame({
+    "Channel": ["Paid Search", "Facebook Paid", "Display Paid"],
+    "ROI": roi
+})
+
+fig1, ax1 = plt.subplots()
+sns.barplot(data=mmm_df, x="Channel", y="ROI", ax=ax1)
+ax1.set_title("Estimated ROI per Channel")
+st.pyplot(fig1)
+
+# --- Causal Impact Section ---
+st.subheader("🧪 Causal Impact Analysis - Brand Campaign (Weeks 40–44)")
+
+pre_period = [0, 39]
+post_period = [40, 51]
+
+ci_df = country_df[["conversions", "paid_search", "fb_paid", "display_paid"]].copy()
+
+# Simulate effect of removing brand campaign (reduce paid search artificially in post period)
+ci_df["paid_search_adj"] = ci_df["paid_search"]
+ci_df.loc[post_period[0]:post_period[1], "paid_search_adj"] -= 40
+ci_df["paid_search_adj"] = ci_df["paid_search_adj"].clip(lower=0)
+
+impact_df = ci_df[["conversions", "paid_search_adj", "fb_paid", "display_paid"]].copy()
+impact_df.columns = ["response", "paid_search", "fb_paid", "display_paid"]
+
+impact = CausalImpact(impact_df, pre_period, post_period)
+st.write(impact.summary())
+st.write(impact.summary(output='report'))
+st.pyplot(impact.plot())
