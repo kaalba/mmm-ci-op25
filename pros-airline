@@ -1,93 +1,56 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 from causalimpact import CausalImpact
 import matplotlib.pyplot as plt
-import seaborn as sns
+from io import BytesIO
 
-st.set_page_config(layout="wide")
+# --- Page Setup ---
+st.set_page_config(page_title="Causal Impact Dashboard", layout="wide")
+st.title("📉 Causal Impact Analysis (Brand Pause)")
 
-# --- Simulate data ---
-n_weeks = 52
-countries = ["Argentina", "Brazil", "Chile", "Mexico"]
-np.random.seed(42)
-
+# --- Load CSV Data ---
 @st.cache_data
-def simulate_data():
-    data = []
-    for country in countries:
-        for week in range(n_weeks):
-            paid_search = np.random.gamma(120, 2)
-            fb_paid = np.random.gamma(90, 2)
-            display_paid = np.random.gamma(60, 2)
-            brand_campaign = 1 if (week >= 40 and week <= 44) else 0
-            baseline = 500 + week * 2 + np.random.normal(0, 15)
-            conv = (
-                0.015 * paid_search +
-                0.02 * fb_paid +
-                0.018 * display_paid +
-                (20 if (brand_campaign == 1 and country == "Argentina") else 0) +
-                baseline
-            )
-            data.append({
-                "week": week,
-                "country": country,
-                "paid_search": paid_search,
-                "fb_paid": fb_paid,
-                "display_paid": display_paid,
-                "brand_campaign": brand_campaign,
-                "conversions": conv
-            })
-    return pd.DataFrame(data)
+def load_data():
+    df = pd.read_csv("dummy_data_ci.csv", parse_dates=["date"])
+    return df
 
-df = simulate_data()
+df = load_data()
 
-# --- UI ---
-st.title("🛫 PROS Airline - MMM & Causal Impact Dashboard")
-st.sidebar.header("🔍 Select Market")
-selected_country = st.sidebar.selectbox("Country", countries)
+# --- Check expected columns ---
+expected_cols = {"date", "market", "conversions", "Paid Search", "Paid Social"}
+if not expected_cols.issubset(df.columns):
+    st.error(f"Missing columns in CSV. Expected columns: {expected_cols}")
+    st.stop()
 
-country_df = df[df.country == selected_country].copy()
+# --- Input for pause date ---
+pause_date = st.date_input("🛑 Select pause start date", pd.to_datetime("2024-11-01"))
 
-# --- MMM Section ---
-st.subheader("📊 Marketing Mix Modeling (MMM) Results")
+# --- Market selection ---
+markets = df["market"].unique()
+selected_market = st.selectbox("🌍 Select Market", markets)
 
-X = country_df[["paid_search", "fb_paid", "display_paid"]].values
-y = country_df["conversions"].values
+# --- Run CausalImpact for selected market ---
+df_m = df[df["market"] == selected_market].copy()
+df_m = df_m[["date", "Paid Search", "Paid Social", "conversions"]]
+df_m = df_m.set_index("date")
 
-from sklearn.linear_model import Ridge
-model = Ridge(alpha=1.0)
-model.fit(X, y)
-coefs = model.coef_
-roi = coefs / X.mean(axis=0)
+full_weeks = df_m.index.sort_values().unique()
+pre_period = [full_weeks.min(), full_weeks[full_weeks < pd.to_datetime(pause_date)].max()]
+post_period = [pd.to_datetime(pause_date), full_weeks.max()]
 
-mmm_df = pd.DataFrame({
-    "Channel": ["Paid Search", "Facebook Paid", "Display Paid"],
-    "ROI": roi
-})
+ci_data = df_m[["conversions", "Paid Search", "Paid Social"]]
+impact = CausalImpact(ci_data, pre_period, post_period)
 
-fig1, ax1 = plt.subplots()
-sns.barplot(data=mmm_df, x="Channel", y="ROI", ax=ax1)
-ax1.set_title("Estimated ROI per Channel")
-st.pyplot(fig1)
+# --- Display Results ---
+st.subheader("📊 Summary")
+st.text(impact.summary())
 
-# --- Causal Impact Section ---
-st.subheader("🧪 Causal Impact Analysis - Brand Campaign (Weeks 40–44)")
+st.subheader("📝 Full Report")
+st.markdown(f"<pre>{impact.summary(output='report')}</pre>", unsafe_allow_html=True)
 
-pre_period = [0, 39]
-post_period = [40, 51]
-
-ci_df = country_df[["conversions", "paid_search", "fb_paid", "display_paid"]].copy()
-
-# Simulate effect of removing brand campaign (reduce paid search artificially in post period)
-ci_df["paid_search_adj"] = ci_df["paid_search"]
-ci_df.loc[post_period[0]:post_period[1], "paid_search_adj"] -= 40
-ci_df["paid_search_adj"] = ci_df["paid_search_adj"].clip(lower=0)
-
-impact_df = ci_df[["conversions", "paid_search_adj", "fb_paid", "display_paid"]].copy()
-impact_df.columns = ["response", "paid_search", "fb_paid", "display_paid"]
-
-impact = CausalImpact(impact_df, pre_period, post_period)
-st.write(impact.summary())
-st.write(impact.summary(output='report'))
-st.pyplot(impact.plot())
+st.subheader("📈 Impact Plot")
+fig = impact.plot(figsize=(10, 5))
+buf = BytesIO()
+fig.savefig(buf, format="png", bbox_inches="tight")
+buf.seek(0)
+st.image(buf)
