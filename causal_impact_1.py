@@ -78,13 +78,6 @@ ax.set_ylabel("Conversions")
 ax.legend()
 ax.grid(True)
 
-# Streamlit rendering
-buf = BytesIO()
-fig.savefig(buf, format="png", bbox_inches="tight")
-buf.seek(0)
-st.image(buf)
-buf.close()
-
 # Streamlit image render
 buf = BytesIO()
 fig.savefig(buf, format="png", bbox_inches="tight")
