@@ -61,7 +61,7 @@ st.markdown(f"<pre>{impact.summary(output='report')}</pre>", unsafe_allow_html=T
 st.subheader("📈 Impact Plot - All Plots")
 # Plot the results using the CausalImpact plot function
 fig, ax = plt.subplots(figsize=(10, 6))
-impact.plot(ax=ax)
+impact.plot()
 
 # Embed the plot into Streamlit
 st.pyplot(fig)
