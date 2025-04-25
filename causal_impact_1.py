@@ -1,10 +1,15 @@
+import requests
+import streamlit as st
+import pandas as pd
+from causalimpact import CausalImpact
+import matplotlib.pyplot as plt
+from io import BytesIO
+
 # Page config
 st.set_page_config(page_title="MMM and Causal Impact working together", layout="wide")
 
+#MARKETING MIX MODELING
 #Embedding HTML file 
-import requests
-import streamlit as st
-
 # URL of the raw HTML file on GitHub
 html_url = "https://raw.githubusercontent.com/kaalba/mmm-ci-op25/main/summary_output_v2.html"
 
@@ -17,12 +22,6 @@ st.title("## 📊 Google Meridian Analysis", unsafe_allow_html=True)
 st.components.v1.html(html_content, height=600, scrolling=True)
 
 #CAUSAL IMPACT - BRAND PAUSE
-
-import streamlit as st
-import pandas as pd
-from causalimpact import CausalImpact
-import matplotlib.pyplot as plt
-from io import BytesIO
 
 st.title("📉 Causal Impact Analysis (Brand Pause)")
 
