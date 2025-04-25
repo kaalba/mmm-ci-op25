@@ -107,3 +107,25 @@ st.subheader("📈 Impact Plot - All Plots")
 fig = impact.plot()  # This returns a matplotlib Figure object
 # Embed the plot into Streamlit
 st.pyplot(fig)
+
+#MARKETING MIX MODELING - BUDGET OPTIMIZATION
+st.markdown("# 📊 Google Meridian Budget Optimization", unsafe_allow_html=True)
+# Block of text right after the HTML content
+st.markdown("""
+### 📝 **Analysis Overview**
+
+This section presents the analysis from the **Google Meridian** budget optimizer tool.
+
+It includes key insights and recommendations after the results from the causal impact test.
+
+The analysis demonstrates how shifting the budget to **Paid Display** Improves the overall revenue.
+
+Feel free to explore the full data and results!
+""")
+# Fetch and embed the HTML content from GitHub
+html_url = "https://raw.githubusercontent.com/kaalba/mmm-ci-op25/main/optimization_output.html"
+response = requests.get(html_url)
+html_content = response.text
+
+# Embed in Streamlit
+st.components.v1.html(html_content, height=600, scrolling=True)
