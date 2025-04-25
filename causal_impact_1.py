@@ -49,6 +49,7 @@ post_period = [pd.to_datetime(pause_date), full_weeks.max()]
 
 ci_data = df_m[["conversions", "Paid Search", "Paid Social"]]
 impact = CausalImpact(ci_data, pre_period, post_period)
+results = impact.inferences
 
 # Output
 st.subheader("📊 Summary")
