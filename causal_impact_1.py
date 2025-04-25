@@ -51,29 +51,34 @@ ci_data = df_m[["conversions", "Paid Search", "Paid Social"]]
 impact = CausalImpact(ci_data, pre_period, post_period)
 results = impact.inferences
 
-# Get summaries
-summary_text = impact.summary()
-summary_report = impact.summary(output='report')
-summary_df = impact.summary_data
+# Extract components
+summary = impact.summary_data.round(2)
 
-# Format dates
-pre_start, pre_end = pre_period[0].date(), pre_period[1].date()
-post_start, post_end = post_period[0].date(), post_period[1].date()
+# Pull key values for custom display
+avg_effect = summary.loc['Absolute effect (s.d.)', 'Average']
+rel_effect = summary.loc['Relative effect (s.d.)', 'Average']
+ci_lower = summary.loc['Relative effect (s.d.)', '95% CI'].split(",")[0].strip("[")
+ci_upper = summary.loc['Relative effect (s.d.)', '95% CI'].split(",")[1].strip("]")
+
+# Show metrics
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.metric("📉 Avg Effect", f"{avg_effect}")
+with col2:
+    st.metric("📊 Relative Effect", f"{rel_effect}")
+with col3:
+    st.metric("🎯 95% CI", f"{ci_lower} to {ci_upper}")
 
 # Output
-st.subheader("📊 Estimated Impact Summary")
+st.subheader("📊 Estimated Impact Summary (Org)")
 st.text(impact.summary())
-st.markdown("### 📉 Estimated Impact Summary")
-summary_display = summary_df.round(2)
-summary_display.rename(columns={
-    'Average': 'Avg Effect',
-    'Cumulative': 'Total Effect',
-    'Std. Dev.': 'Std Dev',
-    'Lower Bound': 'Lower CI',
-    'Upper Bound': 'Upper CI'
-}, inplace=True)
 
-st.dataframe(summary_display)
+st.markdown("### 📉 Estimated Impact Summary")
+st.dataframe(summary)
+# Expandable detailed explanation
+with st.expander("📝 Full Text Report"):
+    st.markdown(f"```{impact.summary(output='report')}```")
 
 st.subheader("📝 Report")
 st.markdown(f"<pre>{impact.summary(output='report')}</pre>", unsafe_allow_html=True)
