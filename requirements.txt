@@ -2,6 +2,6 @@ streamlit
 pandas
 numpy
 matplotlib
-Cython<3
-pystan==2.19.1.1
-causalimpact==0.0.14
+seaborn
+scikit-learn
+pycausalimpact
