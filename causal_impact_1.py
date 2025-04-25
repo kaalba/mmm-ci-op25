@@ -64,9 +64,12 @@ if fig is not None:
     buf = BytesIO()
     fig.savefig(buf, format="png", bbox_inches="tight")
     buf.seek(0)
+# Convert the image to base64
     img_base64 = base64.b64encode(buf.read()).decode('utf-8')
     buf.close()
     plt.close()
+
+    # Display the plot using Streamlit
+    st.image(buf, use_column_width=True)  # Use 'use_column_width' to make it responsive
 else:
-    print("Error: The plot figure is None. Could not save the plot.")
-st.image(buf)
+    st.write("Error: The plot figure is None. Could not save the plot.")
