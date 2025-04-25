@@ -73,3 +73,19 @@ if fig is not None:
     st.image(buf, use_column_width=True)  # Use 'use_column_width' to make it responsive
 else:
     st.write("Error: The plot figure is None. Could not save the plot.")
+
+st.subheader("📈 Testing Plot")
+plt.figure(figsize=(10, 6))
+plt.plot(df_m.index, df_m['conversions'], label='Conversions')
+plt.title('Conversions over Time')
+plt.xlabel('Date')
+plt.ylabel('Conversions')
+plt.legend()
+plt.grid(True)
+
+# Save to buffer and show in Streamlit
+buf = BytesIO()
+plt.savefig(buf, format="png", bbox_inches="tight")
+buf.seek(0)
+st.image(buf)
+buf.close()
