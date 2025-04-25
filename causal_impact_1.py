@@ -18,12 +18,12 @@ response = requests.get(html_url)
 html_content = response.text
 
 # Embed in Streamlit
-st.markdown("## 📊 Google Meridian Analysis", unsafe_allow_html=True)
+st.markdown("# 📊 Google Meridian Analysis", unsafe_allow_html=True)
 st.components.v1.html(html_content, height=600, scrolling=True)
 
 #CAUSAL IMPACT - BRAND PAUSE
 
-st.title("📉 Causal Impact Analysis (Brand Pause)")
+st.markdown("# 📉 Causal Impact Analysis (Brand Pause)")
 
 # Load data
 @st.cache_data
@@ -75,7 +75,7 @@ ci_fmt = f"{ci_lower:.2%} to {ci_upper:.2%}"
 avg_effect_fmt = f"{avg_effect:,.2f}"
 
 # Display with metrics
-st.markdown("### 🧮 **Key Impact Metrics**")
+st.subheader("🧮 **Key Impact Metrics**")
 col1, col2, col3 = st.columns(3)
 
 with col1:
