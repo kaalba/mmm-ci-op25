@@ -59,6 +59,14 @@ st.markdown(f"<pre>{impact.summary(output='report')}</pre>", unsafe_allow_html=T
 
 st.subheader("📈 Impact Plot")
 fig = impact.plot(figsize=(10, 5))
-buf = BytesIO()
-fig.savefig(buf, format="png", bbox_inches="tight")
+# Check if the figure is valid before saving it
+if fig is not None:
+    buf = BytesIO()
+    fig.savefig(buf, format="png", bbox_inches="tight")
+    buf.seek(0)
+    img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+    buf.close()
+    plt.close()
+else:
+    print("Error: The plot figure is None. Could not save the plot.")
 st.image(buf)
