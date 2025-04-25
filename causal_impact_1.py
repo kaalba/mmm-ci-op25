@@ -60,4 +60,5 @@ st.markdown(f"<pre>{impact.summary(output='report')}</pre>", unsafe_allow_html=T
 st.subheader("📈 Impact Plot")
 fig = impact.plot(figsize=(10, 5))
 buf = BytesIO()
-fig.savefig(buf, format="png", bbox_inches_
+fig.savefig(buf, format="png", bbox_inches="tight")
+st.image(buf)
