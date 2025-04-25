@@ -1,7 +1,3 @@
-# Page config
-st.set_page_config(page_title="Causal Impact Dashboard", layout="wide")
-st.title("📉 Causal Impact Analysis (Brand Pause)")
-
 #Embedding HTML file 
 import requests
 import streamlit as st
@@ -31,6 +27,10 @@ import pandas as pd
 from causalimpact import CausalImpact
 import matplotlib.pyplot as plt
 from io import BytesIO
+
+# Page config
+st.set_page_config(page_title="Causal Impact Dashboard", layout="wide")
+st.title("📉 Causal Impact Analysis (Brand Pause)")
 
 # Load data
 @st.cache_data
