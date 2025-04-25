@@ -91,6 +91,13 @@ fig3, ax3 = plt.subplots(figsize=(10, 6))
 
 ax3.plot(results.index, results['point_effects'], label='Pointwise Effect', color='purple')
 ax3.fill_between(results.index, results['point_effects_lower'], results['point_effects_upper'], color='purple', alpha=0.2)
+effect_min = results['point_effects_lower'].min()
+effect_max = results['point_effects_upper'].max()
+
+# Add some margin
+margin = (effect_max - effect_min) * 0.1
+
+ax.set_ylim(effect_min - margin, effect_max + margin)
 
 ax3.axhline(0, color='gray', linestyle='--')
 ax3.axvline(pd.to_datetime(pause_date), color='red', linestyle='--', label='Pause Start')
