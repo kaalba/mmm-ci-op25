@@ -58,8 +58,8 @@ st.subheader("📝 Report")
 st.markdown(f"<pre>{impact.summary(output='report')}</pre>", unsafe_allow_html=True)
 
 st.subheader("📈 Impact Plot")
-# Manual plot of observed vs predicted
-st.subheader("Manual Impact Plot")
+st.write("📋 Columns in impact.inferences:")
+st.write(impact.inferences.columns.tolist())
 
 results = impact.inferences
 fig, ax = plt.subplots(figsize=(10, 6))
