@@ -74,7 +74,9 @@ if fig is not None:
 else:
     st.write("Error: The plot figure is None. Could not save the plot.")
 
-st.subheader("📈 Testing Plot")
+import matplotlib.pyplot as plt
+
+# Manually plot the 'conversions' data from pre and post period
 plt.figure(figsize=(10, 6))
 plt.plot(df_m.index, df_m['conversions'], label='Conversions')
 plt.title('Conversions over Time')
