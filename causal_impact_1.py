@@ -9,17 +9,7 @@ from io import BytesIO
 st.set_page_config(page_title="MMM and Causal Impact working together", layout="wide")
 
 #MARKETING MIX MODELING
-#Embedding HTML file 
-# URL of the raw HTML file on GitHub
-html_url = "https://raw.githubusercontent.com/kaalba/mmm-ci-op25/main/summary_output_v2.html"
-
-# Fetch the HTML content
-response = requests.get(html_url)
-html_content = response.text
-
-# Embed in Streamlit
 st.markdown("# 📊 Google Meridian Estimations", unsafe_allow_html=True)
-st.components.v1.html(html_content, height=600, scrolling=True)
 # Block of text right after the HTML content
 st.markdown("""
 ### 📝 **Analysis Overview**
@@ -32,6 +22,13 @@ The analysis demonstrates how these channels contribute to the overall revenue a
 
 Feel free to explore the full data and results!
 """)
+# Fetch and embed the HTML content from GitHub
+html_url = "https://raw.githubusercontent.com/kaalba/mmm-ci-op25/main/summary_output_v2.html"
+response = requests.get(html_url)
+html_content = response.text
+
+# Embed in Streamlit
+st.components.v1.html(html_content, height=600, scrolling=True)
 
 #CAUSAL IMPACT - BRAND PAUSE
 
