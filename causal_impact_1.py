@@ -53,6 +53,10 @@ results = impact.inferences
 
 # Extract components
 summary = impact.summary_data.round(2)
+st.write("🔍 Summary Data Preview")
+st.dataframe(summary)
+st.write("👉 Rows:", summary.index.tolist())
+st.write("👉 Columns:", summary.columns.tolist())
 
 # Pull key values for custom display
 avg_effect = summary.loc['Absolute effect (s.d.)', 'Average']
