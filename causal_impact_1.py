@@ -57,21 +57,32 @@ st.text(impact.summary())
 st.subheader("📝 Report")
 st.markdown(f"<pre>{impact.summary(output='report')}</pre>", unsafe_allow_html=True)
 
-st.subheader("📈 Impact Plot")
-st.write("📋 Columns in impact.inferences:")
-st.write(impact.inferences.columns.tolist())
-
-results = impact.inferences
+st.subheader("📈 Impact Plot - Actual vs. Predicted")
 fig, ax = plt.subplots(figsize=(10, 6))
-ax.plot(results.index, results['response'], label='Actual')
-ax.plot(results.index, results['preds'], label='Predicted (No Pause)', linestyle='--')
-ax.fill_between(results.index, results['preds_lower'], results['preds_upper'], color='gray', alpha=0.3)
+
+# Plot actual and predicted values
+ax.plot(results.index, results['post_cum_y'], label='Actual', color='black')
+ax.plot(results.index, results['preds'], label='Predicted (No Pause)', linestyle='--', color='blue')
+
+# Confidence interval
+ax.fill_between(results.index, results['preds_lower'], results['preds_upper'], color='blue', alpha=0.2)
+
+# Pause date marker
 ax.axvline(pd.to_datetime(pause_date), color='red', linestyle='--', label='Pause Start')
+
+# Labels and formatting
 ax.set_title("Causal Impact: Conversions Over Time")
 ax.set_xlabel("Date")
 ax.set_ylabel("Conversions")
 ax.legend()
 ax.grid(True)
+
+# Streamlit rendering
+buf = BytesIO()
+fig.savefig(buf, format="png", bbox_inches="tight")
+buf.seek(0)
+st.image(buf)
+buf.close()
 
 # Streamlit image render
 buf = BytesIO()
@@ -80,18 +91,46 @@ buf.seek(0)
 st.image(buf)
 buf.close()
 
-# Manually plot the 'conversions' data from pre and post period
-plt.figure(figsize=(10, 6))
-plt.plot(df_m.index, df_m['conversions'], label='Conversions')
-plt.title('Conversions over Time')
-plt.xlabel('Date')
-plt.ylabel('Conversions')
-plt.legend()
-plt.grid(True)
+st.subheader("📈 Impact Plot - Pointwise Effect Plot")
+# 📊 Pointwise Effect Plot
+fig3, ax3 = plt.subplots(figsize=(10, 6))
 
-# Save to buffer and show in Streamlit
-buf = BytesIO()
-plt.savefig(buf, format="png", bbox_inches="tight")
-buf.seek(0)
-st.image(buf)
-buf.close()
+ax3.plot(results.index, results['point_effects'], label='Pointwise Effect', color='purple')
+ax3.fill_between(results.index, results['point_effects_lower'], results['point_effects_upper'], color='purple', alpha=0.2)
+
+ax3.axhline(0, color='gray', linestyle='--')
+ax3.axvline(pd.to_datetime(pause_date), color='red', linestyle='--', label='Pause Start')
+
+ax3.set_title("Pointwise Effect of Brand Pause")
+ax3.set_xlabel("Date")
+ax3.set_ylabel("Conversions")
+ax3.legend()
+ax3.grid(True)
+
+buf3 = BytesIO()
+fig3.savefig(buf3, format="png", bbox_inches="tight")
+buf3.seek(0)
+st.image(buf3)
+buf3.close()
+
+st.subheader("📈 Impact Plot - Cumulative Effects Plot")
+# 📈 Cumulative Effects Plot
+fig2, ax2 = plt.subplots(figsize=(10, 6))
+
+ax2.plot(results.index, results['post_cum_effects'], label='Cumulative Effect', color='green')
+ax2.fill_between(results.index, results['post_cum_effects_lower'], results['post_cum_effects_upper'], color='green', alpha=0.2)
+
+ax2.axhline(0, color='gray', linestyle='--')
+ax2.axvline(pd.to_datetime(pause_date), color='red', linestyle='--', label='Pause Start')
+
+ax2.set_title("Cumulative Effect of Brand Pause")
+ax2.set_xlabel("Date")
+ax2.set_ylabel("Conversions")
+ax2.legend()
+ax2.grid(True)
+
+buf2 = BytesIO()
+fig2.savefig(buf2, format="png", bbox_inches="tight")
+buf2.seek(0)
+st.image(buf2)
+buf2.close()
