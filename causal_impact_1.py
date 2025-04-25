@@ -53,26 +53,30 @@ results = impact.inferences
 
 # Extract components
 summary = impact.summary_data.round(2)
-st.write("🔍 Summary Data Preview")
-st.dataframe(summary)
-st.write("👉 Rows:", summary.index.tolist())
-st.write("👉 Columns:", summary.columns.tolist())
 
-# Pull key values for custom display
-avg_effect = summary.loc['Absolute effect (s.d.)', 'Average']
-rel_effect = summary.loc['Relative effect (s.d.)', 'Average']
-ci_lower = summary.loc['Relative effect (s.d.)', '95% CI'].split(",")[0].strip("[")
-ci_upper = summary.loc['Relative effect (s.d.)', '95% CI'].split(",")[1].strip("]")
+# Pull values using correct labels
+avg_effect = summary.at["abs_effect", "average"]
+rel_effect = summary.at["rel_effect", "average"]
+ci_lower = summary.at["rel_effect_lower", "average"]
+ci_upper = summary.at["rel_effect_upper", "average"]
 
-# Show metrics
+# Format for display
+rel_effect_fmt = f"{rel_effect:.2%}"
+ci_fmt = f"{ci_lower:.2%} to {ci_upper:.2%}"
+avg_effect_fmt = f"{avg_effect:,.2f}"
+
+# Display with metrics
+st.markdown("### 🧮 **Key Impact Metrics**")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.metric("📉 Avg Effect", f"{avg_effect}")
+    st.metric("📉 Avg Effect", avg_effect_fmt)
+
 with col2:
-    st.metric("📊 Relative Effect", f"{rel_effect}")
+    st.metric("📊 Relative Effect", rel_effect_fmt)
+
 with col3:
-    st.metric("🎯 95% CI", f"{ci_lower} to {ci_upper}")
+    st.metric("🎯 95% CI", ci_fmt)
 
 # Output
 st.subheader("📊 Estimated Impact Summary (Org)")
