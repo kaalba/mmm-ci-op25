@@ -51,9 +51,29 @@ ci_data = df_m[["conversions", "Paid Search", "Paid Social"]]
 impact = CausalImpact(ci_data, pre_period, post_period)
 results = impact.inferences
 
+# Get summaries
+summary_text = impact.summary()
+summary_report = impact.summary(output='report')
+summary_df = impact.summary_data
+
+# Format dates
+pre_start, pre_end = pre_period[0].date(), pre_period[1].date()
+post_start, post_end = post_period[0].date(), post_period[1].date()
+
 # Output
-st.subheader("📊 Summary")
+st.subheader("📊 Estimated Impact Summary")
 st.text(impact.summary())
+st.markdown("### 📉 Estimated Impact Summary")
+summary_display = summary_df.round(2)
+summary_display.rename(columns={
+    'Average': 'Avg Effect',
+    'Cumulative': 'Total Effect',
+    'Std. Dev.': 'Std Dev',
+    'Lower Bound': 'Lower CI',
+    'Upper Bound': 'Upper CI'
+}, inplace=True)
+
+st.dataframe(summary_display)
 
 st.subheader("📝 Report")
 st.markdown(f"<pre>{impact.summary(output='report')}</pre>", unsafe_allow_html=True)
