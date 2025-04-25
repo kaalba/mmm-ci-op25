@@ -32,7 +32,7 @@ if not required_columns.issubset(df.columns):
     st.stop()
 
 # Input: pause date
-pause_date = st.date_input("🛑 Select pause start date", pd.to_datetime("2024-11-01"))
+pause_date = '2024-07-28'
 
 # Input: market selection
 markets = df["market"].unique()
