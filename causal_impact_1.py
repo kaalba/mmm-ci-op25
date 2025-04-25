@@ -18,7 +18,7 @@ response = requests.get(html_url)
 html_content = response.text
 
 # Embed in Streamlit
-st.title("## 📊 Google Meridian Analysis", unsafe_allow_html=True)
+st.markdown("## 📊 Google Meridian Analysis", unsafe_allow_html=True)
 st.components.v1.html(html_content, height=600, scrolling=True)
 
 #CAUSAL IMPACT - BRAND PAUSE
