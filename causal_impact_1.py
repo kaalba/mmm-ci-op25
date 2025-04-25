@@ -58,23 +58,27 @@ st.subheader("📝 Report")
 st.markdown(f"<pre>{impact.summary(output='report')}</pre>", unsafe_allow_html=True)
 
 st.subheader("📈 Impact Plot")
-fig = impact.plot(figsize=(10, 5))
-# Check if the figure is valid before saving it
-if fig is not None:
-    buf = BytesIO()
-    fig.savefig(buf, format="png", bbox_inches="tight")
-    buf.seek(0)
-# Convert the image to base64
-    img_base64 = base64.b64encode(buf.read()).decode('utf-8')
-    buf.close()
-    plt.close()
+# Manual plot of observed vs predicted
+st.subheader("Manual Impact Plot")
 
-    # Display the plot using Streamlit
-    st.image(buf, use_column_width=True)  # Use 'use_column_width' to make it responsive
-else:
-    st.write("Error: The plot figure is None. Could not save the plot.")
+results = impact.inferences
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.plot(results.index, results['response'], label='Actual')
+ax.plot(results.index, results['preds'], label='Predicted (No Pause)', linestyle='--')
+ax.fill_between(results.index, results['preds_lower'], results['preds_upper'], color='gray', alpha=0.3)
+ax.axvline(pd.to_datetime(pause_date), color='red', linestyle='--', label='Pause Start')
+ax.set_title("Causal Impact: Conversions Over Time")
+ax.set_xlabel("Date")
+ax.set_ylabel("Conversions")
+ax.legend()
+ax.grid(True)
 
-import matplotlib.pyplot as plt
+# Streamlit image render
+buf = BytesIO()
+fig.savefig(buf, format="png", bbox_inches="tight")
+buf.seek(0)
+st.image(buf)
+buf.close()
 
 # Manually plot the 'conversions' data from pre and post period
 plt.figure(figsize=(10, 6))
