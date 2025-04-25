@@ -51,6 +51,7 @@ ci_data = df_m[["conversions", "Paid Search", "Paid Social"]]
 impact = CausalImpact(ci_data, pre_period, post_period)
 results = impact.inferences
 
+# Output
 # Extract components
 summary = impact.summary_data.round(2)
 
@@ -78,24 +79,11 @@ with col2:
 with col3:
     st.metric("🎯 95% CI", ci_fmt)
 
-# Output
-st.subheader("📊 Estimated Impact Summary (Org)")
-st.text(impact.summary())
-
-st.markdown("### 🔎 Full Summary Table")
-st.dataframe(summary.round(2))
+with st.expander("📋 Show Full Numerical Results"):
+    st.dataframe(summary.round(2))
 
 with st.expander("📝 Full Explanation Report"):
     st.markdown(f"```{impact.summary(output='report')}```")
-
-st.markdown("### 📉 Estimated Impact Summary")
-st.dataframe(summary)
-# Expandable detailed explanation
-with st.expander("📝 Full Text Report"):
-    st.markdown(f"```{impact.summary(output='report')}```")
-
-st.subheader("📝 Report")
-st.markdown(f"<pre>{impact.summary(output='report')}</pre>", unsafe_allow_html=True)
 
 st.subheader("📈 Impact Plot - All Plots")
 # Plot the results using the CausalImpact plot function
