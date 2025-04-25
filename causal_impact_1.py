@@ -82,6 +82,12 @@ with col3:
 st.subheader("📊 Estimated Impact Summary (Org)")
 st.text(impact.summary())
 
+st.markdown("### 🔎 Full Summary Table")
+st.dataframe(summary.round(2))
+
+with st.expander("📝 Full Explanation Report"):
+    st.markdown(f"```{impact.summary(output='report')}```")
+
 st.markdown("### 📉 Estimated Impact Summary")
 st.dataframe(summary)
 # Expandable detailed explanation
