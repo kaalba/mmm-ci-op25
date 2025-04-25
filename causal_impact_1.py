@@ -18,8 +18,20 @@ response = requests.get(html_url)
 html_content = response.text
 
 # Embed in Streamlit
-st.markdown("# 📊 Google Meridian Analysis", unsafe_allow_html=True)
+st.markdown("# 📊 Google Meridian Estimations", unsafe_allow_html=True)
 st.components.v1.html(html_content, height=600, scrolling=True)
+# Block of text right after the HTML content
+st.markdown("""
+### 📝 **Analysis Overview**
+
+This section presents the analysis from the **Google Meridian** tool. It includes key insights and recommendations derived from the data from the priors ROI.
+
+Paid Search (2.6), Paid Social (4.4), OTA agreements (3.0), Paid Display (3.3).
+
+The analysis demonstrates how these channels contribute to the overall revenue across different markets.
+
+Feel free to explore the full data and results!
+""")
 
 #CAUSAL IMPACT - BRAND PAUSE
 
