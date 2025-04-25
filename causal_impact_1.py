@@ -87,25 +87,30 @@ buf.close()
 
 st.subheader("📈 Impact Plot - Pointwise Effect Plot")
 # 📊 Pointwise Effect Plot
-fig3, ax3 = plt.subplots(figsize=(10, 6))
+fig, ax = plt.subplots(figsize=(10,6))
 
-ax3.plot(results.index, results['point_effects'], label='Pointwise Effect', color='purple')
-ax3.fill_between(results.index, results['point_effects_lower'], results['point_effects_upper'], color='purple', alpha=0.2)
+# Pointwise Effect (per week/day)
+ax.plot(results.index, results['point_effects'], label='Point Effect', color='green')
 
-ax3.axhline(0, color='gray', linestyle='--')
-ax3.axvline(pd.to_datetime(pause_date), color='red', linestyle='--', label='Pause Start')
+# Add uncertainty band
+ax.fill_between(
+    results.index,
+    results['point_effects_lower'],
+    results['point_effects_upper'],
+    color='green',
+    alpha=0.2
+)
 
-ax3.set_title("Pointwise Effect of Brand Pause")
-ax3.set_xlabel("Date")
-ax3.set_ylabel("Conversions")
-ax3.legend()
-ax3.grid(True)
+# Pause Date Line
+ax.axvline(pd.to_datetime(pause_date), color='red', linestyle='--', label='Pause Start')
 
-buf3 = BytesIO()
-fig3.savefig(buf3, format="png", bbox_inches="tight")
-buf3.seek(0)
-st.image(buf3)
-buf3.close()
+ax.set_xlabel('Date')
+ax.set_ylabel('Conversions')
+ax.set_title('Impact Plot - Pointwise Effect')
+ax.legend()
+ax.grid(True)
+
+st.pyplot(fig)
 
 st.subheader("📈 Impact Plot - Cumulative Effects Plot")
 # 📈 Cumulative Effects Plot
