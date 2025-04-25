@@ -59,6 +59,13 @@ st.subheader("📝 Report")
 st.markdown(f"<pre>{impact.summary(output='report')}</pre>", unsafe_allow_html=True)
 
 st.subheader("📈 Impact Plot - Actual vs. Predicted")
+# Plot the results using the CausalImpact plot function
+fig, ax = plt.subplots(figsize=(10, 6))
+impact.plot(ax=ax)
+
+# Embed the plot into Streamlit
+st.pyplot(fig)
+
 fig, ax = plt.subplots(figsize=(10, 6))
 
 # Plot actual and predicted values
