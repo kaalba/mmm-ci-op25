@@ -1,3 +1,18 @@
+#Embedding HTML file 
+import requests
+import streamlit as st
+
+# URL of the raw HTML file on GitHub
+html_url = "https://raw.githubusercontent.com/kaalba/mmm-ci-op25/main/summary_output_v2.html"
+
+# Fetch the HTML content
+response = requests.get(html_url)
+html_content = response.text
+
+# Embed in Streamlit
+st.markdown("## 📊 Google Meridian Analysis", unsafe_allow_html=True)
+st.components.v1.html(html_content, height=600, scrolling=True)
+
 # -*- coding: utf-8 -*-
 """Causal Impact 1
 
