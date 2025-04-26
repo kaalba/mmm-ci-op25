@@ -53,7 +53,7 @@ pause_date = '2024-07-28'
 
 # Input: market selection
 markets = df["market"].unique()
-selected_market = st.selectbox("🌍 Select Market", markets)
+selected_market = st.selectbox("🌍 Select Market", markets, key ="market_select_1")
 
 # Filter and prepare data
 df_m = df[df["market"] == selected_market].copy()
@@ -153,7 +153,7 @@ pause_date = '2024-07-28'
 
 # Input: market selection
 markets = df["market"].unique()
-selected_market = st.selectbox("🌍 Select Market", markets)
+selected_market = st.selectbox("🌍 Select Market", markets, key ="market_select_2")
 
 # Filter and prepare data
 df_m = df[df["market"] == selected_market].copy()
