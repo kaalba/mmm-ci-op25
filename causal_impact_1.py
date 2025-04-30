@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 from causalimpact import CausalImpact
 import matplotlib.pyplot as plt
+import warnings
 from io import BytesIO
 
 # Page config
@@ -103,12 +104,11 @@ with st.expander("📝 Full Explanation Report"):
     st.markdown(f"```{impact.summary(output='report')}```")
 
 st.subheader("📈 Impact Plot - All Plots")
-# Force creation of a new figure to avoid pyplot global usage
-fig, ax = plt.subplots()
-plt.close(fig)  # Prevents duplicate rendering in Streamlit
-
+#Ignore warnings
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", category=DeprecationWarning)   
 # Plot the results using the CausalImpact plot function
-fig = impact.plot()  # This returns a matplotlib Figure object
+    fig = impact.plot()  # This returns a matplotlib Figure object
 # Embed the plot into Streamlit
 st.pyplot(fig)
 
