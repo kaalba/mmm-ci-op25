@@ -105,8 +105,6 @@ with st.expander("📝 Full Explanation Report"):
 st.subheader("📈 Impact Plot - All Plots")
 # Plot the results using the CausalImpact plot function
 fig = impact.plot()  # This returns a matplotlib Figure object
-ax = fig.axes[0]  # Access the first subplot
-ax.set_title("Causal Impact Results", fontsize=10)
 # Embed the plot into Streamlit
 st.pyplot(fig)
 
