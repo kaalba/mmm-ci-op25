@@ -166,7 +166,7 @@ full_weeks = df_m.index.sort_values().unique()
 pre_period = [full_weeks.min(), full_weeks[full_weeks < pd.to_datetime(pause_date)].max()]
 post_period = [pd.to_datetime(pause_date), full_weeks.max()]
 
-ci_data = df_m[["conversions", "Paid Search", "Paid Social"]]
+ci_data = df2_m[["conversions", "Paid Search", "Paid Social"]]
 impact = CausalImpact(ci_data, pre_period, post_period)
 results = impact.inferences
 
