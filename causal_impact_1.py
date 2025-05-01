@@ -158,7 +158,7 @@ markets = df2["market"].unique()
 selected_market = st.selectbox("🌍 Select Market", markets, key ="market_select_2")
 
 # Filter and prepare data
-df_m = df[df["market"] == selected_market].copy()
+df_m = df2[df2["market"] == selected_market].copy()
 df_m = df_m[["date", "Paid Search", "Paid Social", "conversions"]]
 df_m = df_m.set_index("date")
 
@@ -166,7 +166,7 @@ full_weeks = df_m.index.sort_values().unique()
 pre_period = [full_weeks.min(), full_weeks[full_weeks < pd.to_datetime(pause_date)].max()]
 post_period = [pd.to_datetime(pause_date), full_weeks.max()]
 
-ci_data = df2_m[["conversions", "Paid Search", "Paid Social"]]
+ci_data = df_m[["conversions", "Paid Search", "Paid Social"]]
 impact = CausalImpact(ci_data, pre_period, post_period)
 results = impact.inferences
 
