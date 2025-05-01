@@ -139,10 +139,10 @@ st.markdown("# 📉 Causal Impact Analysis (Budget Optimization)")
 # Load data
 @st.cache_data
 def load_data():
-    df2 = pd.read_csv("dummy_data_ci2.csv", parse_dates=["date"])
+    df = pd.read_csv("dummy_data_ci2.csv", parse_dates=["date"])
     return df
 
-df2 = load_data()
+df = load_data()
 
 # Validate columns
 required_columns = {"date", "market", "conversions", "Paid Search", "Paid Social"}
@@ -154,11 +154,11 @@ if not required_columns.issubset(df2.columns):
 pause_date = '2025-02-09'
 
 # Input: market selection
-markets = df2["market"].unique()
+markets = df["market"].unique()
 selected_market = st.selectbox("🌍 Select Market", markets, key ="market_select_2")
 
 # Filter and prepare data
-df_m = df2[df2["market"] == selected_market].copy()
+df_m = df[df["market"] == selected_market].copy()
 df_m = df_m[["date", "Paid Search", "Paid Social", "conversions"]]
 df_m = df_m.set_index("date")
 
