@@ -146,7 +146,7 @@ df = load_data()
 
 # Validate columns
 required_columns = {"date", "market", "conversions", "Paid Search", "Paid Social"}
-if not required_columns.issubset(df2.columns):
+if not required_columns.issubset(df.columns):
     st.error(f"Missing columns in CSV. Required: {required_columns}")
     st.stop()
 
