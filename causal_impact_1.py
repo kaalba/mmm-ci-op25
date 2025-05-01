@@ -151,34 +151,34 @@ if not required_columns.issubset(df2.columns):
     st.stop()
 
 # Input: pause date
-pause_date2 = '2025-02-09'
+pause_date = '2025-02-09'
 
 # Input: market selection
 markets = df2["market"].unique()
 selected_market = st.selectbox("🌍 Select Market", markets, key ="market_select_2")
 
 # Filter and prepare data
-df2_m = df2[df2["market"] == selected_market].copy()
-df2_m = df2_m[["date", "Paid Search", "Paid Social", "conversions"]]
-df2_m = df2_m.set_index("date")
+df_m = df[df["market"] == selected_market].copy()
+df_m = df_m[["date", "Paid Search", "Paid Social", "conversions"]]
+df_m = df_m.set_index("date")
 
-full_weeks = df2_m.index.sort_values().unique()
-pre_period2 = [full_weeks.min(), full_weeks[full_weeks < pd.to_datetime(pause_date2)].max()]
-post_period2 = [pd.to_datetime(pause_date2), full_weeks.max()]
+full_weeks = df_m.index.sort_values().unique()
+pre_period = [full_weeks.min(), full_weeks[full_weeks < pd.to_datetime(pause_date)].max()]
+post_period = [pd.to_datetime(pause_date), full_weeks.max()]
 
-ci_data2 = df2_m[["conversions", "Paid Search", "Paid Social"]]
-impact2 = CausalImpact(ci_data2, pre_period2, post_period2)
-results2 = impact2.inferences
+ci_data = df_m[["conversions", "Paid Search", "Paid Social"]]
+impact = CausalImpact(ci_data, pre_period, post_period)
+results = impact.inferences
 
 # Output
 # Extract components
-summary2 = impact2.summary_data.round(2)
+summary = impact.summary_data.round(2)
 
 # Pull values using correct labels
-avg_effect = summary2.at["abs_effect", "average"]
-rel_effect = summary2.at["rel_effect", "average"]
-ci_lower = summary2.at["rel_effect_lower", "average"]
-ci_upper = summary2.at["rel_effect_upper", "average"]
+avg_effect = summary.at["abs_effect", "average"]
+rel_effect = summary.at["rel_effect", "average"]
+ci_lower = summary.at["rel_effect_lower", "average"]
+ci_upper = summary.at["rel_effect_upper", "average"]
 
 # Format for display
 rel_effect_fmt = f"{rel_effect:.2%}"
@@ -206,6 +206,6 @@ with st.expander("📝 Full Explanation Report"):
 
 st.subheader("📈 Impact Plot - All Plots")
 # Plot the results using the CausalImpact plot function
-fig2 = impact2.plot()  # This returns a matplotlib Figure object
+fig = impact.plot()  # This returns a matplotlib Figure object
 # Embed the plot into Streamlit
-st.pyplot(fig2)
+st.pyplot(fig)
