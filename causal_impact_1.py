@@ -181,10 +181,10 @@ st.markdown("# 📉 Causal Impact Analysis (Budget Optimization)")
 # Load data
 @st.cache_data
 def load_data():
-    df2 = pd.read_csv("dummy_data_ci2.csv", parse_dates=["date"])
-    return df2
+    df = pd.read_csv("dummy_data_ci2.csv", parse_dates=["date"])
+    return df
 
-df2 = load_data()
+df = load_data()
 
 # Validate columns
 required_columns = {"date", "market", "conversions", "Paid Search", "Paid Social"}
