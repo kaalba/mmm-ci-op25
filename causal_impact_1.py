@@ -130,6 +130,28 @@ ax1.set_title(f"Actual vs Predicted")
 ax1.legend()
 st.pyplot(fig1)
 
+# 📊 Plot 2: Pointwise Effects
+fig2, ax2 = plt.subplots(figsize=(12, 4))
+ax2.plot(inferences.index, inferences["point_effects"], label="Pointwise Effect", color="purple")
+ax2.axhline(0, linestyle="--", color="gray")
+ax2.axvline(pd.to_datetime(pause_date), linestyle="--", color="gray")
+ax2.fill_between(inferences.index, inferences["point_effects_lower"], inferences["point_effects_upper"], color="purple", alpha=0.2)
+ax2.set_ylim(ymin_2, ymax_2)
+ax2.set_title(f"Pointwise Effects")
+ax2.legend()
+st.pyplot(fig2)
+
+# 📉 Plot 3: Cumulative Effects
+fig3, ax3 = plt.subplots(figsize=(12, 4))
+ax3.plot(inferences.index, inferences["post_cum_effects"], label="Cumulative Effect", color="green")
+ax3.axhline(0, linestyle="--", color="gray")
+ax3.axvline(pd.to_datetime(pause_date), linestyle="--", color="gray")
+ax3.fill_between(inferences.index, inferences["post_cum_effects_lower"], inferences["post_cum_effects_upper"], color="green", alpha=0.2)
+ax3.set_ylim(ymin_3, ymax_3)
+ax3.set_title(f"Cumulative Effects")
+ax3.legend()
+st.pyplot(fig3)
+
 #Ignore warnings and plot
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore", message=".*Calling st.pyplot*")
