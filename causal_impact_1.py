@@ -182,7 +182,7 @@ st.markdown("# 📉 Causal Impact Analysis (Budget Optimization)")
 @st.cache_data
 def load_data():
     df2 = pd.read_csv("dummy_data_ci2.csv", parse_dates=["date"])
-    return df
+    return df2
 
 df2 = load_data()
 
