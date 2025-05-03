@@ -200,7 +200,7 @@ markets = df["market"].unique()
 selected_market = st.selectbox("🌍 Select Market", markets, key ="market_select_2")
 
 # Filter and prepare data
-df_m = df2[df2["market"] == selected_market].copy()
+df_m = df[df["market"] == selected_market].copy()
 df_m = df_m[["date", "Paid Search", "Paid Social", "conversions"]]
 df_m = df_m.set_index("date")
 
