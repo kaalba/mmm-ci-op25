@@ -67,7 +67,6 @@ post_period = [pd.to_datetime(pause_date), full_weeks.max()]
 
 ci_data = df_m[["conversions", "Paid Search", "Paid Social"]]
 impact = CausalImpact(ci_data, pre_period, post_period)
-results = impact.inferences
 
 # Output
 # Extract components
@@ -104,6 +103,33 @@ with st.expander("📝 Full Explanation Report"):
     st.markdown(f"```{impact.summary(output='report')}```")
 
 st.subheader("📈 Impact Plot - All Plots")
+# Get date index and inference data
+inferences = impact.inferences.copy()
+inferences["date"] = pd.date_range(start="2024-01-01", periods=52, freq='W')
+inferences.set_index("date", inplace=True)
+
+inferences["actual"] = impact.data["conversions"]
+inferences = inferences.iloc[1:].fillna(0)
+
+    # Y-axis ranges
+    ymin_1 = inferences["actual"].min() - 100
+    ymax_1 = inferences["actual"].max() + 100
+    ymin_2 = inferences["point_effects"].min() - 100
+    ymax_2 = inferences["point_effects"].max() + 100
+    ymin_3 = inferences["post_cum_effects"].min() - 100
+    ymax_3 = inferences["post_cum_effects"].max() + 100
+
+    # 📈 Plot 1: Actual vs Predicted
+    fig1, ax1 = plt.subplots(figsize=(12, 4))
+    ax1.plot(inferences.index, inferences["actual"], label="Actual", color="black")
+    ax1.plot(inferences.index, inferences["preds"], label="Predicted", linestyle="--", color="blue")
+    ax1.axvline(pd.to_datetime(pause_start), linestyle="--", color="gray")
+    ax1.fill_between(inferences.index, inferences["preds_lower"], inferences["preds_upper"], color="blue", alpha=0.2)
+    ax1.set_ylim(ymin_1, ymax_1)
+    ax1.set_title(f"Actual vs Predicted - {market}")
+    ax1.legend()
+    st.pyplot(fig1)
+
 #Ignore warnings and plot
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore", message=".*Calling st.pyplot*")
@@ -168,7 +194,6 @@ post_period = [pd.to_datetime(pause_date), full_weeks.max()]
 
 ci_data = df_m[["conversions", "Paid Search", "Paid Social"]]
 impact = CausalImpact(ci_data, pre_period, post_period)
-results = impact.inferences
 
 # Output
 # Extract components
