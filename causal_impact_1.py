@@ -152,12 +152,6 @@ ax3.set_title(f"Cumulative Effects")
 ax3.legend()
 st.pyplot(fig3)
 
-#Ignore warnings and plot
-with warnings.catch_warnings():
-    warnings.filterwarnings("ignore", message=".*Calling st.pyplot*")
-    fig = impact.plot() # Plot the results using the CausalImpact plot function as a matplotlib Figure object
-    st.pyplot(fig) # Embed the plot into Streamlit
-
 #MARKETING MIX MODELING - BUDGET OPTIMIZATION
 st.markdown("# 📊 Google Meridian Budget Optimization", unsafe_allow_html=True)
 # Block of text right after the HTML content
@@ -252,7 +246,51 @@ with st.expander("📝 Full Explanation Report"):
     st.markdown(f"```{impact.summary(output='report')}```")
 
 st.subheader("📈 Impact Plot - All Plots")
-# Plot the results using the CausalImpact plot function
-fig = impact.plot()  # This returns a matplotlib Figure object
-# Embed the plot into Streamlit
-st.pyplot(fig)
+# Get date index and inference data
+inferences = impact.inferences.copy()
+inferences["date"] = pd.date_range(start="2024-01-01", periods=52, freq='W')
+inferences.set_index("date", inplace=True)
+
+inferences["actual"] = impact.data["conversions"]
+inferences = inferences.iloc[1:].fillna(0)
+
+# Y-axis ranges
+ymin_1 = inferences["actual"].min() - 100
+ymax_1 = inferences["actual"].max() + 100
+ymin_2 = inferences["point_effects"].min() - 100
+ymax_2 = inferences["point_effects"].max() + 100
+ymin_3 = inferences["post_cum_effects"].min() - 100
+ymax_3 = inferences["post_cum_effects"].max() + 100
+
+# 📈 Plot 1: Actual vs Predicted
+fig1, ax1 = plt.subplots(figsize=(12, 4))
+ax1.plot(inferences.index, inferences["actual"], label="Actual", color="black")
+ax1.plot(inferences.index, inferences["preds"], label="Predicted", linestyle="--", color="blue")
+ax1.axvline(pd.to_datetime(pause_date), linestyle="--", color="gray")
+ax1.fill_between(inferences.index, inferences["preds_lower"], inferences["preds_upper"], color="blue", alpha=0.2)
+ax1.set_ylim(ymin_1, ymax_1)
+ax1.set_title(f"Actual vs Predicted")
+ax1.legend()
+st.pyplot(fig1)
+
+# 📊 Plot 2: Pointwise Effects
+fig2, ax2 = plt.subplots(figsize=(12, 4))
+ax2.plot(inferences.index, inferences["point_effects"], label="Pointwise Effect", color="purple")
+ax2.axhline(0, linestyle="--", color="gray")
+ax2.axvline(pd.to_datetime(pause_date), linestyle="--", color="gray")
+ax2.fill_between(inferences.index, inferences["point_effects_lower"], inferences["point_effects_upper"], color="purple", alpha=0.2)
+ax2.set_ylim(ymin_2, ymax_2)
+ax2.set_title(f"Pointwise Effects")
+ax2.legend()
+st.pyplot(fig2)
+
+# 📉 Plot 3: Cumulative Effects
+fig3, ax3 = plt.subplots(figsize=(12, 4))
+ax3.plot(inferences.index, inferences["post_cum_effects"], label="Cumulative Effect", color="green")
+ax3.axhline(0, linestyle="--", color="gray")
+ax3.axvline(pd.to_datetime(pause_date), linestyle="--", color="gray")
+ax3.fill_between(inferences.index, inferences["post_cum_effects_lower"], inferences["post_cum_effects_upper"], color="green", alpha=0.2)
+ax3.set_ylim(ymin_3, ymax_3)
+ax3.set_title(f"Cumulative Effects")
+ax3.legend()
+st.pyplot(fig3)
