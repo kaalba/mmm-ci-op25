@@ -106,7 +106,7 @@ with st.expander("📝 Full Explanation Report"):
 st.subheader("📈 Impact Plot - All Plots")
 #Ignore warnings and plot
 with warnings.catch_warnings():
-    warnings.filterwarnings("ignore", message=".*Calling st.pyplot.*")
+    warnings.filterwarnings("ignore", message=".*Calling st.pyplot*")
     fig = impact.plot() # Plot the results using the CausalImpact plot function as a matplotlib Figure object
     st.pyplot(fig) # Embed the plot into Streamlit
 
