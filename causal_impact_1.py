@@ -123,7 +123,7 @@ ymax_3 = inferences["post_cum_effects"].max() + 100
 fig1, ax1 = plt.subplots(figsize=(12, 4))
 ax1.plot(inferences.index, inferences["actual"], label="Actual", color="black")
 ax1.plot(inferences.index, inferences["preds"], label="Predicted", linestyle="--", color="blue")
-ax1.axvline(pd.to_datetime(pause_start), linestyle="--", color="gray")
+ax1.axvline(pd.to_datetime(pause_date), linestyle="--", color="gray")
 ax1.fill_between(inferences.index, inferences["preds_lower"], inferences["preds_upper"], color="blue", alpha=0.2)
 ax1.set_ylim(ymin_1, ymax_1)
 ax1.set_title(f"Actual vs Predicted - {market}")
